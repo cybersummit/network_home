@@ -2,7 +2,7 @@
 import socket
 import time
 import telnetlib
-get local machine name
+#get local machine name
 host = socket.gethostname()
 print host
 #TODO Fix getaddrinfo syntax
