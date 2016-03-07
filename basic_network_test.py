@@ -1,14 +1,8 @@
-# Network-TEst.py
+#!/usr/bin/env python
+
 import socket
-import time
+import ipgetter
 import netifaces as ni
-import telnetlib
-#get local machine name
-host = socket.gethostname()
-print host
-#TODO Fix getaddrinfo syntax
-#ip = socket.getaddrinfo ()
-# print ip
 import logging
 
 logging.basicConfig(level=logging.INFO,
@@ -23,23 +17,40 @@ class BasicNetworkTest:
     def __init__(self):
         pass
 
-    def do_test(self):
-        logging.info("Running tests...")
+    @staticmethod
+    def get_internal_ip_addresses():
+        logging.info("Getting IP addresses...")
         interfaces = ni.interfaces()
+        ip_addresses = list()
         for interface in interfaces:
-            logging.info("Interface: {0}: address info: {1}".format(interface, str(ni.ifaddresses(interface))))
-            # print interface
+            try:
+                ip_addresses.append(ni.ifaddresses(interface)[ni.AF_INET][0]['addr'])
+            except:
+                pass
 
-        pass
-        # ip = ni.ifaddresses('eth0')[2][0]['addr']
-        # print ip  # should print "192.168.100.37"
+        return ip_addresses
 
+    @staticmethod
+    def get_external_ip_address():
+        external_ip = None
+        try:
+            external_ip = ipgetter.myip()
+        except:
+            pass
+
+        return external_ip
+
+    @staticmethod
+    def get_host_name():
         host = socket.gethostname()
-        print host
-    def __del__(self):
-        pass
+        return host
+
+    def print_summary(self):
+        print "Host: {0}".format(self.get_host_name())
+        print "Interal IP addressed: {0}".format(self.get_internal_ip_addresses())
+        print "External IP address: {0}".format(self.get_external_ip_address())
 
 if __name__ == "__main__":
     basicNetworkTest = BasicNetworkTest()
-    basicNetworkTest.do_test()
+    basicNetworkTest.print_summary()
 
